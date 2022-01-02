@@ -1,17 +1,15 @@
-import { useState } from 'react';
-import styles from '../ContactListItem/ContactListItem.module.scss';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import styles from './ContactForm.module.css';
 
-function ContactForm({ onAddContact }) {
+function ContactForm({ addContact }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+
   const handleChange = e => {
     const { name, value } = e.target;
-    if (name === 'name') {
-      setName(value);
-      return;
-    }
-    setNumber(value);
+
+    name === 'name' ? setName(value) : setNumber(value);
   };
   const resetState = () => {
     setName('');
@@ -20,7 +18,9 @@ function ContactForm({ onAddContact }) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    onAddContact(name, number);
+
+    addContact(name, number);
+
     resetState();
   };
 
@@ -61,7 +61,7 @@ function ContactForm({ onAddContact }) {
 }
 
 ContactForm.propTypes = {
-  onAddContact: PropTypes.func.isRequired,
+  addContact: PropTypes.func,
 };
 
 export default ContactForm;

@@ -1,54 +1,38 @@
-import { useState } from 'react';
 import './App.css';
 import ContactForm from './Components/ContactForm/ContactForm';
 import ContactList from './Components/ContactList/ContactList';
+import { getVisibleContacts, getFilter } from './redux/selectors';
 import Filter from './Components/Filter/Filter';
-import ContactsHook from './hooks/ContactsHook';
-import { v4 as uuidv4 } from 'uuid';
+import contactsActions from 'redux/contacts/contacts-Actions';
+import filterActions from './redux/filter/filter-Actions';
+import { useSelector, useDispatch } from 'react-redux';
 
 function App() {
-  const [contacts, setContacts] = ContactsHook('contacts');
-  const [filter, setFilter] = useState('');
+  const contacts = useSelector(getVisibleContacts);
+  const filter = useSelector(getFilter);
+  const dispatch = useDispatch();
 
-  const addContact = (name, number) => {
-    if (contacts.find(contact => name === contact.name)) {
-      alert(name + ' is already in contacts');
-      return;
-    }
-
-    const contact = {
-      id: uuidv4(),
-      name,
-      number,
-    };
-    setContacts(e => [...e, contact]);
-  };
-
-  const handleChangeFilter = event => {
-    setFilter(event.target.value);
-  };
-
-  const filteredContact = () => {
-    return contacts.filter(contacts =>
-      contacts.name.toLowerCase().includes(filter.toLowerCase()),
-    );
+  const handleChangeFilter = e => {
+    dispatch(filterActions(e));
   };
 
   const deleteContact = contactId => {
-    setContacts(e => e.filter(contact => contact.id !== contactId));
+    dispatch(contactsActions.deleteContact(contactId));
   };
-
+  const addContact = (name, number) => {
+    contacts.find(contact => name === contact.name)
+      ? alert(name + ' is already in contacts')
+      : dispatch(contactsActions.addContact({ name, number }));
+  };
   return (
     <div>
       <h1>Phonebook</h1>
-      <ContactForm onAddContact={addContact} />
-
+      <ContactForm addContact={addContact} />
       <h2>Contacts</h2>
-      {contacts.length > 1 && (
-        <Filter handleChangeFilter={handleChangeFilter} filter={filter} />
-      )}
 
-      <ContactList contacts={filteredContact()} deleteContact={deleteContact} />
+      <Filter handleChangeFilter={handleChangeFilter} filter={filter} />
+
+      <ContactList contacts={contacts} deleteContact={deleteContact} />
     </div>
   );
 }

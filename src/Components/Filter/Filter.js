@@ -7,7 +7,7 @@ let Filter = ({ handleChangeFilter, filter }) => {
       <label>
         Find contacts by name
         <input
-          onChange={handleChangeFilter}
+          onChange={e => handleChangeFilter(e.target.value)}
           value={filter}
           name="filter"
           type="text"
@@ -17,9 +17,8 @@ let Filter = ({ handleChangeFilter, filter }) => {
   );
 };
 
-export default Filter;
-
 Filter.propTypes = {
   handleChangeFilter: PropTypes.func,
   filter: PropTypes.string,
 };
+export default Filter;
