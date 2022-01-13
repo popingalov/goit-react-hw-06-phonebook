@@ -1,11 +1,22 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import styles from './ContactForm.module.css';
+import { useSelector, useDispatch } from 'react-redux';
+import { getVisibleContacts } from '../../redux/selectors';
+import contactsActions from '../../redux/contacts/contacts-Actions';
 
-function ContactForm({ addContact }) {
+function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const contacts = useSelector(getVisibleContacts);
 
+  const dispatch = useDispatch();
+
+  const addContact = (name, number) => {
+    contacts.find(contact => name === contact.name)
+      ? alert(name + ' is already in contacts')
+      : dispatch(contactsActions.addContact({ name, number }));
+  };
   const handleChange = e => {
     const { name, value } = e.target;
 

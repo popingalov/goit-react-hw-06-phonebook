@@ -1,27 +1,38 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import styles from './ContactListItem.module.scss';
-const ContactList = ({ deleteContact, contacts }) => (
-  <section>
-    <ul>
-      {contacts.map(contact => (
-        <li key={contact.id} className={styles.listItem}>
-          {contact.name}: {contact.number}
-          {deleteContact && (
-            <button
-              className={styles.btn}
-              onClick={() => {
-                deleteContact(contact.id);
-              }}
-            >
-              Delete
-            </button>
-          )}
-        </li>
-      ))}
-    </ul>
-  </section>
-);
+import contactsActions from '../../redux/contacts/contacts-Actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { getVisibleContacts } from '../../redux/selectors';
+function ContactList() {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getVisibleContacts);
+
+  const deleteContact = contactId => {
+    dispatch(contactsActions.deleteContact(contactId));
+  };
+
+  return (
+    <section>
+      <ul>
+        {contacts.map(contact => (
+          <li key={contact.id} className={styles.listItem}>
+            {contact.name}: {contact.number}
+            {deleteContact && (
+              <button
+                className={styles.btn}
+                onClick={() => {
+                  deleteContact(contact.id);
+                }}
+              >
+                Delete
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
 ContactList.propTypes = {
   contacts: PropTypes.arrayOf(
     PropTypes.shape({
